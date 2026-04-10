@@ -164,7 +164,7 @@
                   <ul class="mt-4 space-y-3 text-lg leading-relaxed text-[color:var(--ink)]">
                     <li>Een lang hoofdverhaal over open multi-stakeholderbeleid.</li>
                     <li>Twee praktische deelverhalen over sociale cooperaties en landbouwbeleid.</li>
-                    <li>Een vormtaal die printmagazine en webervaring met elkaar verbindt.</li>
+                    <li>Een redactionele vormtaal met uitgesproken themakleuren per verhaal.</li>
                   </ul>
                 </div>
                 <a href="${hrefForRoute(mainStory.slug)}" class="inline-flex w-fit rounded-full bg-[color:var(--accent)] px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent-contrast)] transition-opacity hover:opacity-85 md:hidden">Lees het verhaal</a>
@@ -184,11 +184,11 @@
             ${secondaryStories
               .map(
                 (story) => `
-                  <article class="paper-panel card-hover reveal-block relative overflow-hidden rounded-[2.4rem] p-7 md:p-9">
+                  <article class="paper-panel card-hover reveal-block relative overflow-hidden rounded-[2.4rem] p-7 md:p-9 flex flex-col">
                     <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${story.kicker}</p>
                     <h3 class="mt-4 max-w-2xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${story.title}</h3>
                     <p class="mt-5 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
-                    <div class="mt-8 flex items-center justify-between gap-5 border-t border-[color:var(--line)] pt-5">
+                    <div class="mt-auto flex items-center justify-between gap-5 border-t border-[color:var(--line)] pt-5">
                       <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">${story.label}</span>
                       <a href="${hrefForRoute(story.slug)}" class="font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-opacity hover:opacity-75">Open verhaal</a>
                     </div>
@@ -296,8 +296,9 @@
                         ${
                           section.pullQuote
                             ? `
-                              <blockquote class="rounded-[1.8rem] border border-[color:var(--line)] bg-[color:var(--paper-strong)] px-6 py-6 font-display text-2xl uppercase leading-tight tracking-[-0.03em] text-[color:var(--accent)] md:text-3xl">
-                                ${section.pullQuote}
+                              <blockquote class="relative border-l-[3px] border-[color:var(--accent)] pl-6 py-2 md:pl-8">
+                                <span class="absolute -left-1 -top-3 font-display text-7xl leading-none text-[color:var(--accent)] opacity-20 select-none">\u201C</span>
+                                <p class="relative font-serif text-xl italic leading-relaxed text-[color:var(--ink)] md:text-2xl">${section.pullQuote}</p>
                               </blockquote>
                             `
                             : ""
