@@ -11,14 +11,14 @@
   let editMode = false;
 
   const routeMap = new Map(content.routes.map((route) => [route.slug, route]));
-  const storyBySlug = Object.values(content.stories).reduce((map, story) => {
-    map[story.slug] = story;
-    return map;
-  }, {});
+  function getStoryBySlug(slug) {
+    return Object.values(content.stories).find((s) => s.slug === slug);
+  }
 
   let statObserver = null;
   let revealObserver = null;
   let detachScrollProgress = null;
+  let skipScroll = false;
 
   // Helper: returns data-edit attribute string
   function e(path) {
@@ -303,7 +303,7 @@
                             `
                           )
                           .join("")}
-                        <button class="edit-add-para hidden" data-story="${sid}" data-section="${index}">+ Alinea toevoegen</button>
+                        <button class="edit-add-para" data-story="${sid}" data-section="${index}">+ Alinea toevoegen</button>
                         ${
                           section.pullQuote
                             ? `
@@ -502,7 +502,7 @@
     const route = getRouteFromHash();
     applyTheme(route.theme);
 
-    const story = storyBySlug[route.slug];
+    const story = getStoryBySlug(route.slug);
     const pageMarkup = route.id === "home" ? renderHome() : renderStoryPage(story);
 
     app.innerHTML = `
@@ -511,7 +511,10 @@
       ${renderFooter()}
     `;
 
-    window.scrollTo({ top: 0, behavior: "auto" });
+    if (!skipScroll) {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+    skipScroll = false;
     mountRevealAnimations();
     mountStatCounters();
     bindProgressBar(route);
@@ -580,7 +583,7 @@
       el.classList.add("edit-target");
     });
     document.querySelectorAll(".edit-add-para").forEach((btn) => {
-      btn.classList.remove("hidden");
+      btn.classList.add("visible");
     });
   }
 
@@ -590,7 +593,7 @@
       el.classList.remove("edit-target");
     });
     document.querySelectorAll(".edit-add-para").forEach((btn) => {
-      btn.classList.add("hidden");
+      btn.classList.remove("visible");
     });
   }
 
@@ -659,6 +662,7 @@
         letter-spacing: 0.05em;
       }
       .edit-add-para {
+        display: none;
         width: 100%;
         padding: 10px;
         border: 2px dashed rgba(17,17,17,0.2);
@@ -670,6 +674,9 @@
         color: rgba(17,17,17,0.4);
         cursor: pointer;
         transition: border-color 0.15s, color 0.15s;
+      }
+      .edit-add-para.visible {
+        display: block;
       }
       .edit-add-para:hover {
         border-color: rgba(194, 29, 52, 0.5);
@@ -721,7 +728,8 @@
       // Add new paragraph
       content.stories[storyId].sections[secIdx].paragraphs.push("Nieuwe alinea...");
       editData = JSON.parse(JSON.stringify(content));
-      // Re-render current route
+      // Re-render without scrolling to top
+      skipScroll = true;
       renderRoute();
     });
   }
