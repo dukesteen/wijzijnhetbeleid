@@ -6,6 +6,10 @@
     return;
   }
 
+  // Deep clone for editing
+  let editData = JSON.parse(JSON.stringify(content));
+  let editMode = false;
+
   const routeMap = new Map(content.routes.map((route) => [route.slug, route]));
   const storyBySlug = Object.values(content.stories).reduce((map, story) => {
     map[story.slug] = story;
@@ -15,6 +19,11 @@
   let statObserver = null;
   let revealObserver = null;
   let detachScrollProgress = null;
+
+  // Helper: returns data-edit attribute string
+  function e(path) {
+    return `data-edit="${path}"`;
+  }
 
   function getRouteFromHash() {
     const hash = window.location.hash.replace(/^#\/?/, "");
@@ -48,8 +57,8 @@
       <header class="sticky top-0 z-50 border-b border-[color:var(--line)] bg-[color:var(--surface)]">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 md:px-8">
           <a href="#/" class="group flex min-w-0 flex-col">
-            <span class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueLabel}</span>
-            <span class="font-display text-2xl uppercase tracking-[0.04em] text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--accent)]">${content.siteMeta.issueTitle}</span>
+            <span ${e("siteMeta.issueLabel")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueLabel}</span>
+            <span ${e("siteMeta.issueTitle")} class="font-display text-2xl uppercase tracking-[0.04em] text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--accent)]">${content.siteMeta.issueTitle}</span>
           </a>
           <nav class="flex flex-wrap items-center justify-end gap-x-2 gap-y-2 text-sm md:text-base">
             ${content.routes
@@ -88,20 +97,20 @@
           <div class="accent-wash absolute inset-0"></div>
           <div class="mx-auto grid max-w-7xl gap-12 px-5 py-12 md:px-8 md:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
             <div class="relative z-10">
-              <p class="font-display text-sm uppercase tracking-[0.34em] text-[color:var(--muted)]">${content.siteMeta.projectLabel}</p>
+              <p ${e("siteMeta.projectLabel")} class="font-display text-sm uppercase tracking-[0.34em] text-[color:var(--muted)]">${content.siteMeta.projectLabel}</p>
               <div class="mt-4 flex flex-wrap items-end gap-x-4 gap-y-2">
                 <h1 class="display-shadow font-display text-6xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-7xl lg:text-[7.25rem]">${content.siteMeta.issueTitle}</h1>
                 <span class="rounded-full bg-[color:var(--accent)] px-5 py-2 font-display text-sm uppercase tracking-[0.28em] text-[color:var(--accent-contrast)]">web special</span>
               </div>
-              <p class="mt-6 max-w-3xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${content.siteMeta.intro}</p>
+              <p ${e("siteMeta.intro")} class="mt-6 max-w-3xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${content.siteMeta.intro}</p>
               <div class="mt-8 grid max-w-3xl gap-4 sm:grid-cols-2">
                 <div class="paper-panel reveal-block relative overflow-hidden rounded-[2rem] p-6">
                   <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Kern van het project</p>
-                  <p class="mt-3 text-lg leading-relaxed text-[color:var(--ink)]">${content.siteMeta.subtitle}</p>
+                  <p ${e("siteMeta.subtitle")} class="mt-3 text-lg leading-relaxed text-[color:var(--ink)]">${content.siteMeta.subtitle}</p>
                 </div>
                 <div class="paper-panel reveal-block relative overflow-hidden rounded-[2rem] p-6">
                   <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Vormtaal</p>
-                  <p class="mt-3 text-lg leading-relaxed text-[color:var(--ink)]">${content.siteMeta.editorialNote}</p>
+                  <p ${e("siteMeta.editorialNote")} class="mt-3 text-lg leading-relaxed text-[color:var(--ink)]">${content.siteMeta.editorialNote}</p>
                 </div>
               </div>
             </div>
@@ -117,8 +126,8 @@
                       <li class="grid grid-cols-[auto_1fr_auto] items-start gap-4">
                         <span class="font-display text-4xl leading-none text-[color:var(--accent)]">0${index + 1}</span>
                         <div>
-                          <p class="font-display text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">${story.kicker}</p>
-                          <a href="${hrefForRoute(route.slug)}" class="mt-1 block text-xl leading-tight text-[color:var(--ink)] transition-colors hover:text-[color:var(--accent)]">${story.title}</a>
+                          <p ${e(`stories.${route.id}.kicker`)} class="font-display text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">${story.kicker}</p>
+                          <a href="${hrefForRoute(route.slug)}" ${e(`stories.${route.id}.title`)} class="mt-1 block text-xl leading-tight text-[color:var(--ink)] transition-colors hover:text-[color:var(--accent)]">${story.title}</a>
                         </div>
                         <span class="vertical-label hidden text-xs font-display uppercase tracking-[0.32em] text-[color:var(--muted)] md:block">${story.shortTitle}</span>
                       </li>
@@ -134,7 +143,7 @@
           <div class="mb-8 flex items-end justify-between gap-6">
             <div>
               <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Uitgelicht</p>
-              <h2 class="mt-3 max-w-3xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-6xl">${mainStory.title}</h2>
+              <h2 ${e("stories.main.title")} class="mt-3 max-w-3xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-6xl">${mainStory.title}</h2>
             </div>
             <a href="${hrefForRoute(mainStory.slug)}" class="hidden rounded-full border border-[color:var(--accent)] px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--accent-contrast)] md:inline-flex">Lees het verhaal</a>
           </div>
@@ -143,15 +152,15 @@
             <div class="absolute right-0 top-0 hidden h-32 w-32 translate-x-6 -translate-y-6 rounded-full bg-[color:var(--accent-soft)] opacity-80 md:block"></div>
             <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
               <div class="relative z-10">
-                <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${mainStory.kicker}</p>
-                <p class="mt-4 max-w-3xl text-lg leading-relaxed text-[color:var(--ink)] md:text-xl">${mainStory.dek}</p>
+                <p ${e("stories.main.kicker")} class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${mainStory.kicker}</p>
+                <p ${e("stories.main.dek")} class="mt-4 max-w-3xl text-lg leading-relaxed text-[color:var(--ink)] md:text-xl">${mainStory.dek}</p>
                 <div class="mt-8 flex flex-wrap gap-3">
                   ${mainStory.stats
                     .map(
-                      (stat) => `
+                      (stat, si) => `
                         <div class="rounded-full border border-[color:var(--line)] bg-white/70 px-4 py-2 text-sm text-[color:var(--muted)]">
                           <span class="font-display text-lg uppercase tracking-[0.14em] text-[color:var(--accent)]">${stat.display}</span>
-                          <span class="ml-2">${stat.label}</span>
+                          <span ${e(`stories.main.stats.${si}.label`)} class="ml-2">${stat.label}</span>
                         </div>
                       `
                     )
@@ -185,9 +194,9 @@
               .map(
                 (story) => `
                   <article class="paper-panel card-hover reveal-block relative overflow-hidden rounded-[2.4rem] p-7 md:p-9 flex flex-col">
-                    <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${story.kicker}</p>
-                    <h3 class="mt-4 max-w-2xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${story.title}</h3>
-                    <p class="mt-5 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
+                    <p ${e(`stories.${story.id}.kicker`)} class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${story.kicker}</p>
+                    <h3 ${e(`stories.${story.id}.title`)} class="mt-4 max-w-2xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${story.title}</h3>
+                    <p ${e(`stories.${story.id}.summary`)} class="mt-5 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
                     <div class="mt-auto flex items-center justify-between gap-5 border-t border-[color:var(--line)] pt-5">
                       <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">${story.label}</span>
                       <a href="${hrefForRoute(story.slug)}" class="font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-opacity hover:opacity-75">Open verhaal</a>
@@ -203,21 +212,22 @@
   }
 
   function renderStoryPage(story) {
-    const isMainStory = story.id === "main";
+    const sid = story.id;
+    const isMainStory = sid === "main";
     return `
       <main class="route-fade pb-24">
         <section class="relative overflow-hidden border-b border-[color:var(--line)]">
           <div class="accent-wash absolute inset-0"></div>
           <div class="mx-auto grid max-w-7xl gap-10 px-5 py-10 md:px-8 md:py-16 lg:grid-cols-[0.18fr_1fr]">
             <div class="hidden justify-center lg:flex">
-              <span class="vertical-label font-display text-xs uppercase tracking-[0.36em] text-[color:var(--muted)]">${story.kicker} • ${story.shortTitle}</span>
+              <span class="vertical-label font-display text-xs uppercase tracking-[0.36em] text-[color:var(--muted)]">${story.kicker} \u2022 ${story.shortTitle}</span>
             </div>
             <div class="relative z-10">
-              <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueTitle} • ${story.kicker}</p>
-              <h1 class="display-shadow mt-5 max-w-5xl font-display text-5xl uppercase leading-[0.92] tracking-[-0.05em] text-[color:var(--ink)] sm:text-6xl lg:text-[6.4rem]">${story.title}</h1>
-              <p class="mt-6 max-w-4xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${story.dek}</p>
+              <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueTitle} \u2022 ${story.kicker}</p>
+              <h1 ${e(`stories.${sid}.title`)} class="display-shadow mt-5 max-w-5xl font-display text-5xl uppercase leading-[0.92] tracking-[-0.05em] text-[color:var(--ink)] sm:text-6xl lg:text-[6.4rem]">${story.title}</h1>
+              <p ${e(`stories.${sid}.dek`)} class="mt-6 max-w-4xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${story.dek}</p>
               <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[color:var(--line)] pt-5 text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">
-                <span>${story.byline}</span>
+                <span ${e(`stories.${sid}.byline`)}>${story.byline}</span>
                 <span>${content.siteMeta.projectLabel}</span>
               </div>
             </div>
@@ -231,13 +241,13 @@
                 <div class="grid gap-5 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
                   ${story.stats
                     .map(
-                      (stat) => `
+                      (stat, si) => `
                         <article data-reveal class="paper-panel reveal-block rounded-[2rem] p-6 md:p-8">
                           <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Kerncijfer</p>
                           <div class="mt-5 font-display text-5xl uppercase leading-none tracking-[-0.04em] text-[color:var(--accent)] md:text-6xl">
                             <span class="js-stat" data-value="${stat.value}" data-prefix="${stat.prefix}" data-suffix="${stat.suffix}" data-compact="${stat.compact}">0</span>
                           </div>
-                          <p class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${stat.label}</p>
+                          <p ${e(`stories.main.stats.${si}.label`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${stat.label}</p>
                         </article>
                       `
                     )
@@ -265,7 +275,7 @@
               </div>
               <div data-reveal class="paper-panel reveal-block rounded-[2rem] p-6">
                 <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">In een zin</p>
-                <p class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
+                <p ${e(`stories.${sid}.summary`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
               </div>
             </aside>
 
@@ -278,27 +288,28 @@
                         <span class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">0${index + 1}</span>
                         ${
                           section.asideLabel
-                            ? `<span class="inline-flex rounded-full bg-[color:var(--accent-soft)] px-4 py-2 font-display text-xs uppercase tracking-[0.28em] text-[color:var(--accent)]">${section.asideLabel}</span>`
+                            ? `<span ${e(`stories.${sid}.sections.${index}.asideLabel`)} class="inline-flex rounded-full bg-[color:var(--accent-soft)] px-4 py-2 font-display text-xs uppercase tracking-[0.28em] text-[color:var(--accent)]">${section.asideLabel}</span>`
                             : ""
                         }
                       </div>
-                      <h2 class="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">${section.heading}</h2>
+                      <h2 ${e(`stories.${sid}.sections.${index}.heading`)} class="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">${section.heading}</h2>
                       <div class="mt-8 space-y-6">
                         ${section.paragraphs
                           .map(
                             (paragraph, paragraphIndex) => `
                               <div class="${paragraphIndex === 0 ? "story-copy" : ""}">
-                                <p class="text-lg leading-relaxed text-[color:var(--ink)] md:text-[1.28rem]">${paragraph}</p>
+                                <p ${e(`stories.${sid}.sections.${index}.paragraphs.${paragraphIndex}`)} class="text-lg leading-relaxed text-[color:var(--ink)] md:text-[1.28rem]">${paragraph}</p>
                               </div>
                             `
                           )
                           .join("")}
+                        <button class="edit-add-para hidden" data-story="${sid}" data-section="${index}">+ Alinea toevoegen</button>
                         ${
                           section.pullQuote
                             ? `
                               <blockquote class="relative border-l-[3px] border-[color:var(--accent)] pl-6 py-2 md:pl-8">
                                 <span class="absolute -left-1 -top-3 font-display text-7xl leading-none text-[color:var(--accent)] opacity-20 select-none">\u201C</span>
-                                <p class="relative font-serif text-xl italic leading-relaxed text-[color:var(--ink)] md:text-2xl">${section.pullQuote}</p>
+                                <p ${e(`stories.${sid}.sections.${index}.pullQuote`)} class="relative font-serif text-xl italic leading-relaxed text-[color:var(--ink)] md:text-2xl">${section.pullQuote}</p>
                               </blockquote>
                             `
                             : ""
@@ -325,9 +336,9 @@
                 const related = content.stories[id];
                 return `
                   <article data-reveal class="paper-panel card-hover reveal-block rounded-[2.2rem] p-7">
-                    <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${related.kicker}</p>
-                    <h3 class="mt-4 font-display text-3xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${related.title}</h3>
-                    <p class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${related.summary}</p>
+                    <p ${e(`stories.${id}.kicker`)} class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${related.kicker}</p>
+                    <h3 ${e(`stories.${id}.title`)} class="mt-4 font-display text-3xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${related.title}</h3>
+                    <p ${e(`stories.${id}.summary`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${related.summary}</p>
                     <a href="${hrefForRoute(related.slug)}" class="mt-6 inline-flex rounded-full border border-[color:var(--accent)] px-5 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--accent-contrast)]">Open verhaal</a>
                   </article>
                 `;
@@ -481,6 +492,13 @@
   }
 
   function renderRoute() {
+    // Collect any in-progress edits before re-rendering
+    if (editMode) {
+      collectEdits();
+      // Apply edits to the live content object so re-render uses updated text
+      applyEditsToContent();
+    }
+
     const route = getRouteFromHash();
     applyTheme(route.theme);
 
@@ -497,8 +515,237 @@
     mountRevealAnimations();
     mountStatCounters();
     bindProgressBar(route);
+
+    if (editMode) {
+      activateEditable();
+    }
+  }
+
+  function applyEditsToContent() {
+    // Write editData back into the live content object so re-renders pick up changes
+    content.siteMeta = JSON.parse(JSON.stringify(editData.siteMeta));
+    Object.keys(editData.stories).forEach((key) => {
+      content.stories[key] = JSON.parse(JSON.stringify(editData.stories[key]));
+    });
   }
 
   window.addEventListener("hashchange", renderRoute);
   window.addEventListener("DOMContentLoaded", renderRoute);
+
+  // ─── Edit Mode ───────────────────────────────────────────
+
+  function setNestedValue(obj, path, value) {
+    const keys = path.split(".");
+    let cur = obj;
+    for (let i = 0; i < keys.length - 1; i++) {
+      cur = cur[keys[i]];
+    }
+    cur[keys[keys.length - 1]] = value;
+  }
+
+  function collectEdits() {
+    document.querySelectorAll("[data-edit]").forEach((el) => {
+      const path = el.dataset.edit;
+      const text = el.innerText.trim();
+      setNestedValue(editData, path, text);
+    });
+  }
+
+  function generateContentJS() {
+    collectEdits();
+    // Rebuild stat display values
+    Object.values(editData.stories).forEach((story) => {
+      if (story.stats) {
+        story.stats.forEach((stat) => {
+          stat.display = `${stat.prefix}${stat.compact || stat.value}${stat.suffix}`;
+        });
+      }
+    });
+    return "const SITE_CONTENT = " + JSON.stringify(editData, null, 2) + ";\n\nwindow.SITE_CONTENT = SITE_CONTENT;\n";
+  }
+
+  function downloadFile(filename, text) {
+    const blob = new Blob([text], { type: "application/javascript" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function activateEditable() {
+    document.querySelectorAll("[data-edit]").forEach((el) => {
+      el.setAttribute("contenteditable", "true");
+      el.classList.add("edit-target");
+    });
+    document.querySelectorAll(".edit-add-para").forEach((btn) => {
+      btn.classList.remove("hidden");
+    });
+  }
+
+  function deactivateEditable() {
+    document.querySelectorAll("[data-edit]").forEach((el) => {
+      el.removeAttribute("contenteditable");
+      el.classList.remove("edit-target");
+    });
+    document.querySelectorAll(".edit-add-para").forEach((btn) => {
+      btn.classList.add("hidden");
+    });
+  }
+
+  // Build editor toolbar (injected into DOM once)
+  function createEditorUI() {
+    // CSS
+    const style = document.createElement("style");
+    style.textContent = `
+      .edit-target {
+        outline: 2px dashed transparent;
+        outline-offset: 4px;
+        border-radius: 4px;
+        transition: outline-color 0.15s;
+        cursor: text;
+      }
+      .edit-target:hover {
+        outline-color: rgba(194, 29, 52, 0.35);
+      }
+      .edit-target:focus {
+        outline-color: rgba(194, 29, 52, 0.7);
+        outline-style: solid;
+      }
+      .edit-toolbar {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9999;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: #111;
+        padding: 10px 16px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .edit-toolbar button {
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .edit-toolbar button:hover { opacity: 0.85; }
+      .edit-toolbar .edit-btn-toggle {
+        background: #c21d34;
+        color: #fff;
+      }
+      .edit-toolbar .edit-btn-toggle.active {
+        background: #fff;
+        color: #111;
+      }
+      .edit-toolbar .edit-btn-export {
+        background: #1a6b34;
+        color: #fff;
+        display: none;
+      }
+      .edit-toolbar .edit-btn-export.visible {
+        display: inline-flex;
+      }
+      .edit-toolbar .edit-label {
+        color: rgba(255,255,255,0.5);
+        font-size: 12px;
+        letter-spacing: 0.05em;
+      }
+      .edit-add-para {
+        width: 100%;
+        padding: 10px;
+        border: 2px dashed rgba(17,17,17,0.2);
+        border-radius: 12px;
+        background: none;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(17,17,17,0.4);
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      .edit-add-para:hover {
+        border-color: rgba(194, 29, 52, 0.5);
+        color: rgba(194, 29, 52, 0.8);
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Toolbar
+    const toolbar = document.createElement("div");
+    toolbar.className = "edit-toolbar";
+    toolbar.innerHTML = `
+      <span class="edit-label">EDITOR</span>
+      <button class="edit-btn-toggle">Bewerken</button>
+      <button class="edit-btn-export">Exporteer content.js</button>
+    `;
+    document.body.appendChild(toolbar);
+
+    const toggleBtn = toolbar.querySelector(".edit-btn-toggle");
+    const exportBtn = toolbar.querySelector(".edit-btn-export");
+
+    toggleBtn.addEventListener("click", () => {
+      editMode = !editMode;
+      toggleBtn.textContent = editMode ? "Stop bewerken" : "Bewerken";
+      toggleBtn.classList.toggle("active", editMode);
+      exportBtn.classList.toggle("visible", editMode);
+
+      if (editMode) {
+        activateEditable();
+      } else {
+        collectEdits();
+        deactivateEditable();
+      }
+    });
+
+    exportBtn.addEventListener("click", () => {
+      downloadFile("content.js", generateContentJS());
+    });
+
+    // Delegated listener for "add paragraph" buttons
+    document.addEventListener("click", (ev) => {
+      const btn = ev.target.closest(".edit-add-para");
+      if (!btn) return;
+      const storyId = btn.dataset.story;
+      const secIdx = Number(btn.dataset.section);
+      // Collect current edits first
+      collectEdits();
+      applyEditsToContent();
+      // Add new paragraph
+      content.stories[storyId].sections[secIdx].paragraphs.push("Nieuwe alinea...");
+      editData = JSON.parse(JSON.stringify(content));
+      // Re-render current route
+      renderRoute();
+    });
+  }
+
+  // Activate editor with Ctrl/Cmd+K or ?edit in URL
+  let editorCreated = false;
+
+  function ensureEditor() {
+    if (!editorCreated) {
+      editorCreated = true;
+      createEditorUI();
+    }
+  }
+
+  if (window.location.search.includes("edit")) {
+    document.addEventListener("DOMContentLoaded", ensureEditor);
+  }
+
+  document.addEventListener("keydown", (ev) => {
+    if ((ev.metaKey || ev.ctrlKey) && ev.key === "k") {
+      ev.preventDefault();
+      ensureEditor();
+      // Also toggle edit mode
+      document.querySelector(".edit-btn-toggle")?.click();
+    }
+  });
 })();
