@@ -261,7 +261,7 @@
           Importeer content.js
           <input type="file" accept=".js" class="hidden-input" id="import-input" />
         </label>
-        <button class="btn btn-secondary" id="btn-preview">Preview</button>
+
         <button class="btn btn-primary" id="btn-export">Exporteer content.js</button>
       </div>
     </div>
@@ -540,9 +540,6 @@
         showToast("content.js gedownload!");
       });
 
-      document.getElementById("btn-preview").addEventListener("click", () => {
-        window.open("index.html", "_blank");
-      });
 
       document.getElementById("import-input").addEventListener("change", (e) => {
         const file = e.target.files[0];
