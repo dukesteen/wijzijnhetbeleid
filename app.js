@@ -6,9 +6,42 @@
     return;
   }
 
-  // Deep clone for editing
-  let editData = JSON.parse(JSON.stringify(content));
+  // Pristine copy of original content (never mutated)
+  const originalContent = JSON.parse(JSON.stringify(content));
+
+  // Deep clone for editing, restore from localStorage if available
+  const STORAGE_KEY = "wijzijnhetbeleid-draft";
+  let editData = loadDraft() || JSON.parse(JSON.stringify(content));
   let editMode = false;
+
+  function loadDraft() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveDraft() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(editData));
+    } catch (e) {}
+  }
+
+  function clearDraft() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+  }
+
+  // If a draft exists, apply it to the live content immediately
+  if (loadDraft()) {
+    content.siteMeta = JSON.parse(JSON.stringify(editData.siteMeta));
+    Object.keys(editData.stories).forEach((key) => {
+      content.stories[key] = JSON.parse(JSON.stringify(editData.stories[key]));
+    });
+  }
 
   const routeMap = new Map(content.routes.map((route) => [route.slug, route]));
   function getStoryBySlug(slug) {
@@ -491,13 +524,15 @@
     updateProgress();
   }
 
+  let skipCollect = false;
+
   function renderRoute() {
     // Collect any in-progress edits before re-rendering
-    if (editMode) {
+    if (editMode && !skipCollect) {
       collectEdits();
-      // Apply edits to the live content object so re-render uses updated text
       applyEditsToContent();
     }
+    skipCollect = false;
 
     const route = getRouteFromHash();
     applyTheme(route.theme);
@@ -552,6 +587,7 @@
       const text = el.innerText.trim();
       setNestedValue(editData, path, text);
     });
+    if (editMode) saveDraft();
   }
 
   function generateContentJS() {
@@ -577,10 +613,18 @@
     URL.revokeObjectURL(url);
   }
 
+  function onEditInput(ev) {
+    const el = ev.target.closest("[data-edit]");
+    if (!el || !editMode) return;
+    setNestedValue(editData, el.dataset.edit, el.innerText.trim());
+    saveDraft();
+  }
+
   function activateEditable() {
     document.querySelectorAll("[data-edit]").forEach((el) => {
       el.setAttribute("contenteditable", "true");
       el.classList.add("edit-target");
+      el.addEventListener("input", onEditInput);
     });
     document.querySelectorAll(".edit-add-para").forEach((btn) => {
       btn.classList.add("visible");
@@ -653,8 +697,14 @@
         color: #fff;
         display: none;
       }
-      .edit-toolbar .edit-btn-export.visible {
+      .edit-toolbar .edit-btn-export.visible,
+      .edit-toolbar .edit-btn-clear.visible {
         display: inline-flex;
+      }
+      .edit-toolbar .edit-btn-clear {
+        background: #444;
+        color: #fff;
+        display: none;
       }
       .edit-toolbar .edit-label {
         color: rgba(255,255,255,0.5);
@@ -691,18 +741,21 @@
     toolbar.innerHTML = `
       <span class="edit-label">EDITOR</span>
       <button class="edit-btn-toggle">Bewerken</button>
+      <button class="edit-btn-clear">Wis wijzigingen</button>
       <button class="edit-btn-export">Exporteer content.js</button>
     `;
     document.body.appendChild(toolbar);
 
     const toggleBtn = toolbar.querySelector(".edit-btn-toggle");
     const exportBtn = toolbar.querySelector(".edit-btn-export");
+    const clearBtn = toolbar.querySelector(".edit-btn-clear");
 
     toggleBtn.addEventListener("click", () => {
       editMode = !editMode;
       toggleBtn.textContent = editMode ? "Stop bewerken" : "Bewerken";
       toggleBtn.classList.toggle("active", editMode);
       exportBtn.classList.toggle("visible", editMode);
+      clearBtn.classList.toggle("visible", editMode);
 
       if (editMode) {
         activateEditable();
@@ -714,6 +767,26 @@
 
     exportBtn.addEventListener("click", () => {
       downloadFile("content.js", generateContentJS());
+      clearDraft();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if (!confirm("Alle wijzigingen wissen? Dit kan niet ongedaan worden.")) return;
+      // Exit edit mode first to prevent any saves
+      editMode = false;
+      toggleBtn.textContent = "Bewerken";
+      toggleBtn.classList.remove("active");
+      exportBtn.classList.remove("visible");
+      clearBtn.classList.remove("visible");
+      // Clear storage and reset data
+      clearDraft();
+      editData = JSON.parse(JSON.stringify(originalContent));
+      content.siteMeta = JSON.parse(JSON.stringify(originalContent.siteMeta));
+      Object.keys(originalContent.stories).forEach((key) => {
+        content.stories[key] = JSON.parse(JSON.stringify(originalContent.stories[key]));
+      });
+      skipCollect = true;
+      renderRoute();
     });
 
     // Delegated listener for "add paragraph" buttons
@@ -728,6 +801,7 @@
       // Add new paragraph
       content.stories[storyId].sections[secIdx].paragraphs.push("Nieuwe alinea...");
       editData = JSON.parse(JSON.stringify(content));
+      saveDraft();
       // Re-render without scrolling to top
       skipScroll = true;
       renderRoute();
