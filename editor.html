@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Editor - Wij zijn het beleid</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f5f5f5;
+        color: #222;
+        line-height: 1.5;
+      }
+
+      .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .top-bar h1 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .top-bar .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        padding: 8px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+
+      .btn:hover { opacity: 0.85; }
+
+      .btn-primary {
+        background: #c21d34;
+        color: #fff;
+      }
+
+      .btn-secondary {
+        background: #e8e8e8;
+        color: #333;
+      }
+
+      .btn-import {
+        background: #1a6b34;
+        color: #fff;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px 16px 80px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #ddd;
+        overflow-x: auto;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        border: none;
+        background: none;
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        white-space: nowrap;
+      }
+
+      .tab.active {
+        color: #c21d34;
+        border-bottom-color: #c21d34;
+      }
+
+      .panel { display: none; }
+      .panel.active { display: block; }
+
+      .card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 16px;
+      }
+
+      .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .field {
+        margin-bottom: 16px;
+      }
+
+      .field:last-child { margin-bottom: 0; }
+
+      .field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #888;
+        margin-bottom: 4px;
+      }
+
+      .field input,
+      .field textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 15px;
+        font-family: inherit;
+        line-height: 1.5;
+        resize: vertical;
+        transition: border-color 0.15s;
+      }
+
+      .field input:focus,
+      .field textarea:focus {
+        outline: none;
+        border-color: #c21d34;
+      }
+
+      .field textarea { min-height: 80px; }
+      .field textarea.tall { min-height: 140px; }
+
+      .section-block {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 12px;
+        background: #fafafa;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .section-header h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .paragraph-block {
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .paragraph-block .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #ff4444;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+        cursor: pointer;
+        line-height: 1;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+
+      .paragraph-block:hover .remove-btn { opacity: 1; }
+
+      .add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 14px;
+        border: 1px dashed #bbb;
+        border-radius: 6px;
+        background: none;
+        font-size: 13px;
+        color: #666;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .add-btn:hover {
+        border-color: #888;
+        color: #333;
+      }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 80px 60px 60px 80px;
+        gap: 8px;
+        align-items: end;
+        margin-bottom: 8px;
+      }
+
+      .stat-row .field { margin-bottom: 0; }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: #222;
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: transform 0.3s ease;
+        z-index: 200;
+      }
+
+      .toast.show { transform: translateX(-50%) translateY(0); }
+
+      .hidden-input { display: none; }
+
+      @media (max-width: 600px) {
+        .stat-row {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1>Content Editor</h1>
+      <div class="actions">
+        <label class="btn btn-import" style="cursor:pointer">
+          Importeer content.js
+          <input type="file" accept=".js" class="hidden-input" id="import-input" />
+        </label>
+        <button class="btn btn-secondary" id="btn-preview">Preview</button>
+        <button class="btn btn-primary" id="btn-export">Exporteer content.js</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="tabs" id="tabs"></div>
+      <div id="panels"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script defer src="./content.js"></script>
+    <script>
+    (function () {
+      let data = null;
+
+      function init() {
+        data = JSON.parse(JSON.stringify(window.SITE_CONTENT));
+        buildUI();
+      }
+
+      function showToast(msg) {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        setTimeout(() => el.classList.remove("show"), 2200);
+      }
+
+      // --- Build tabs & panels ---
+
+      function buildUI() {
+        const tabsEl = document.getElementById("tabs");
+        const panelsEl = document.getElementById("panels");
+        tabsEl.innerHTML = "";
+        panelsEl.innerHTML = "";
+
+        const tabDefs = [
+          { id: "meta", label: "Algemeen" },
+          { id: "main", label: "Hoofdverhaal" },
+          { id: "lansco", label: "LaNSCO" },
+          { id: "markemodel", label: "Markemodel" },
+        ];
+
+        tabDefs.forEach((t, i) => {
+          const btn = document.createElement("button");
+          btn.className = "tab" + (i === 0 ? " active" : "");
+          btn.textContent = t.label;
+          btn.dataset.tab = t.id;
+          btn.addEventListener("click", () => switchTab(t.id));
+          tabsEl.appendChild(btn);
+
+          const panel = document.createElement("div");
+          panel.className = "panel" + (i === 0 ? " active" : "");
+          panel.id = "panel-" + t.id;
+
+          if (t.id === "meta") {
+            panel.innerHTML = buildMetaPanel();
+          } else {
+            panel.innerHTML = buildStoryPanel(t.id);
+          }
+          panelsEl.appendChild(panel);
+        });
+
+        bindAllInputs();
+      }
+
+      function switchTab(id) {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === id));
+        document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === "panel-" + id));
+      }
+
+      // --- Meta panel ---
+
+      function buildMetaPanel() {
+        const m = data.siteMeta;
+        return `
+          <div class="card">
+            <div class="card-title">Site-informatie</div>
+            ${textField("siteMeta.issueLabel", "Label boven titel", m.issueLabel)}
+            ${textField("siteMeta.issueTitle", "Titel", m.issueTitle)}
+            ${textField("siteMeta.projectLabel", "Projectlabel", m.projectLabel)}
+            ${areaField("siteMeta.subtitle", "Ondertitel", m.subtitle)}
+            ${areaField("siteMeta.intro", "Introductie", m.intro, "tall")}
+            ${areaField("siteMeta.editorialNote", "Vormtaal-opmerking", m.editorialNote)}
+          </div>
+        `;
+      }
+
+      // --- Story panel ---
+
+      function buildStoryPanel(storyId) {
+        const s = data.stories[storyId];
+        let html = `
+          <div class="card">
+            <div class="card-title">Basisgegevens</div>
+            ${textField(`stories.${storyId}.title`, "Titel", s.title)}
+            ${textField(`stories.${storyId}.shortTitle`, "Korte titel", s.shortTitle)}
+            ${textField(`stories.${storyId}.kicker`, "Kicker", s.kicker)}
+            ${textField(`stories.${storyId}.byline`, "Auteur", s.byline)}
+            ${areaField(`stories.${storyId}.dek`, "Dek / inleiding", s.dek)}
+            ${areaField(`stories.${storyId}.summary`, "Samenvatting", s.summary)}
+          </div>
+        `;
+
+        if (s.stats) {
+          html += `
+            <div class="card">
+              <div class="card-title">Kerncijfers</div>
+              <div id="stats-${storyId}">
+                ${s.stats.map((st, i) => buildStatRow(storyId, i, st)).join("")}
+              </div>
+              <button class="add-btn" data-action="add-stat" data-story="${storyId}">+ Kerncijfer toevoegen</button>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="card">
+            <div class="card-title">Secties</div>
+            <div id="sections-${storyId}">
+              ${s.sections.map((sec, i) => buildSectionBlock(storyId, i, sec)).join("")}
+            </div>
+            <button class="add-btn" data-action="add-section" data-story="${storyId}">+ Sectie toevoegen</button>
+          </div>
+        `;
+
+        return html;
+      }
+
+      function buildStatRow(storyId, idx, stat) {
+        const p = `stories.${storyId}.stats.${idx}`;
+        return `
+          <div class="stat-row">
+            ${textField(`${p}.label`, "Beschrijving", stat.label)}
+            ${textField(`${p}.value`, "Waarde", stat.value)}
+            ${textField(`${p}.prefix`, "Prefix", stat.prefix)}
+            ${textField(`${p}.suffix`, "Suffix", stat.suffix)}
+            ${textField(`${p}.compact`, "Weergave", stat.compact)}
+          </div>
+        `;
+      }
+
+      function buildSectionBlock(storyId, idx, sec) {
+        const p = `stories.${storyId}.sections.${idx}`;
+        return `
+          <div class="section-block">
+            <div class="section-header">
+              <h4>Sectie ${idx + 1}</h4>
+              <button class="btn btn-secondary" style="padding:4px 10px;font-size:12px" data-action="remove-section" data-story="${storyId}" data-index="${idx}">Verwijder</button>
+            </div>
+            ${textField(`${p}.heading`, "Kop", sec.heading)}
+            ${textField(`${p}.asideLabel`, "Label", sec.asideLabel || "")}
+            <div class="field">
+              <label>Alinea's</label>
+              <div id="paras-${storyId}-${idx}">
+                ${sec.paragraphs.map((para, pi) => `
+                  <div class="paragraph-block">
+                    <textarea data-path="${p}.paragraphs.${pi}" class="bound">${esc(para)}</textarea>
+                    <button class="remove-btn" data-action="remove-para" data-story="${storyId}" data-section="${idx}" data-para="${pi}">&times;</button>
+                  </div>
+                `).join("")}
+              </div>
+              <button class="add-btn" data-action="add-para" data-story="${storyId}" data-section="${idx}">+ Alinea toevoegen</button>
+            </div>
+            ${areaField(`${p}.pullQuote`, "Pull quote (optioneel)", sec.pullQuote || "")}
+          </div>
+        `;
+      }
+
+      // --- Field helpers ---
+
+      function textField(path, label, value) {
+        return `<div class="field"><label>${label}</label><input type="text" data-path="${path}" class="bound" value="${esc(String(value ?? ""))}"></div>`;
+      }
+
+      function areaField(path, label, value, cls) {
+        return `<div class="field"><label>${label}</label><textarea data-path="${path}" class="bound ${cls || ""}">${esc(String(value ?? ""))}</textarea></div>`;
+      }
+
+      function esc(str) {
+        return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      // --- Data binding ---
+
+      function setNestedValue(obj, path, value) {
+        const keys = path.split(".");
+        let cur = obj;
+        for (let i = 0; i < keys.length - 1; i++) {
+          cur = cur[keys[i]];
+        }
+        const lastKey = keys[keys.length - 1];
+        // auto-convert numbers for stat values
+        if (lastKey === "value") {
+          const num = Number(value);
+          cur[lastKey] = isNaN(num) ? value : num;
+        } else {
+          cur[lastKey] = value;
+        }
+      }
+
+      function bindAllInputs() {
+        document.querySelectorAll(".bound").forEach((el) => {
+          el.addEventListener("input", () => {
+            setNestedValue(data, el.dataset.path, el.value);
+          });
+        });
+
+        document.querySelectorAll("[data-action]").forEach((el) => {
+          el.addEventListener("click", handleAction);
+        });
+      }
+
+      function handleAction(e) {
+        const btn = e.currentTarget;
+        const action = btn.dataset.action;
+        const storyId = btn.dataset.story;
+
+        if (action === "add-para") {
+          const secIdx = Number(btn.dataset.section);
+          data.stories[storyId].sections[secIdx].paragraphs.push("");
+          rebuildStory(storyId);
+        } else if (action === "remove-para") {
+          const secIdx = Number(btn.dataset.section);
+          const paraIdx = Number(btn.dataset.para);
+          data.stories[storyId].sections[secIdx].paragraphs.splice(paraIdx, 1);
+          rebuildStory(storyId);
+        } else if (action === "add-section") {
+          data.stories[storyId].sections.push({ heading: "", asideLabel: "", paragraphs: [""], pullQuote: "" });
+          rebuildStory(storyId);
+        } else if (action === "remove-section") {
+          const idx = Number(btn.dataset.index);
+          if (confirm("Sectie " + (idx + 1) + " verwijderen?")) {
+            data.stories[storyId].sections.splice(idx, 1);
+            rebuildStory(storyId);
+          }
+        } else if (action === "add-stat") {
+          data.stories[storyId].stats.push({ value: 0, display: "0", prefix: "", suffix: "", compact: "0", label: "" });
+          rebuildStory(storyId);
+        }
+      }
+
+      function rebuildStory(storyId) {
+        const panel = document.getElementById("panel-" + storyId);
+        panel.innerHTML = buildStoryPanel(storyId);
+        bindAllInputs();
+      }
+
+      // --- Export ---
+
+      function generateContentJS() {
+        // Rebuild display values for stats
+        Object.values(data.stories).forEach((story) => {
+          if (story.stats) {
+            story.stats.forEach((stat) => {
+              stat.display = `${stat.prefix}${stat.compact || stat.value}${stat.suffix}`;
+            });
+          }
+        });
+
+        return "const SITE_CONTENT = " + JSON.stringify(data, null, 2) + ";\n\nwindow.SITE_CONTENT = SITE_CONTENT;\n";
+      }
+
+      function downloadFile(filename, content) {
+        const blob = new Blob([content], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      document.getElementById("btn-export").addEventListener("click", () => {
+        downloadFile("content.js", generateContentJS());
+        showToast("content.js gedownload!");
+      });
+
+      document.getElementById("btn-preview").addEventListener("click", () => {
+        window.open("index.html", "_blank");
+      });
+
+      document.getElementById("import-input").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const code = ev.target.result;
+            const fn = new Function(code + "; return SITE_CONTENT;");
+            const imported = fn();
+            data = JSON.parse(JSON.stringify(imported));
+            buildUI();
+            showToast("Content geimporteerd!");
+          } catch (err) {
+            alert("Kon het bestand niet laden: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+
+      // --- Init ---
+
+      if (window.SITE_CONTENT) {
+        init();
+      } else {
+        window.addEventListener("load", () => {
+          if (window.SITE_CONTENT) init();
+          else document.querySelector(".container").innerHTML = '<div class="card"><p>Kon content.js niet laden. Gebruik de importknop om een bestand te laden.</p></div>';
+        });
+      }
+    })();
+    </script>
+  </body>
+</html>
