@@ -122,7 +122,13 @@
 
   function renderHome() {
     const mainStory = content.stories.main;
-    const secondaryStories = [content.stories.lansco, content.stories.markemodel];
+    const magazinePromo = content.siteMeta.magazinePromo;
+    const foreword = content.siteMeta.foreword;
+    const author = content.siteMeta.author;
+    const secondaryStories = [
+      content.stories.lansco,
+      content.stories.markemodel,
+    ];
 
     return `
       <main class="route-fade pb-24">
@@ -172,6 +178,78 @@
           </div>
         </section>
 
+        <section class="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
+          <article class="paper-panel reveal-block relative overflow-hidden rounded-[2.4rem] p-6 md:p-8 lg:p-10">
+            <div class="grid items-center gap-8 lg:grid-cols-[0.78fr_1fr]">
+              <a
+                href="${magazinePromo.ctaHref}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex h-full items-center justify-center rounded-[2rem] border border-[color:var(--line)] bg-white p-4 transition-transform hover:scale-[1.01]"
+              >
+                <img
+                  src="${magazinePromo.imageSrc}"
+                  alt="${magazinePromo.imageAlt}"
+                  class="max-h-[34rem] w-full rounded-[1.4rem] object-contain shadow-editorial"
+                />
+              </a>
+              <div class="relative z-10">
+                <p ${e("siteMeta.magazinePromo.eyebrow")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${magazinePromo.eyebrow}</p>
+                <h2 ${e("siteMeta.magazinePromo.headline")} class="mt-4 max-w-3xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-6xl">${magazinePromo.headline}</h2>
+                <p ${e("siteMeta.magazinePromo.body")} class="mt-5 max-w-2xl text-lg leading-relaxed text-[color:var(--ink)] md:text-xl">${magazinePromo.body}</p>
+                <div class="mt-8 flex flex-wrap items-center gap-4">
+                  <a
+                    href="${magazinePromo.ctaHref}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex rounded-full bg-[color:var(--accent)] px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent-contrast)] transition-opacity hover:opacity-85"
+                  >
+                    ${magazinePromo.ctaLabel}
+                  </a>
+                  <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">Optimist Speciale Editie 2025</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="mx-auto max-w-7xl px-5 pb-12 md:px-8 md:pb-16">
+          <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <article class="paper-panel reveal-block relative overflow-hidden rounded-[2.4rem] p-7 md:p-9">
+              <p ${e("siteMeta.foreword.eyebrow")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${foreword.eyebrow}</p>
+              <h2 ${e("siteMeta.foreword.title")} class="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">${foreword.title}</h2>
+              <div class="mt-7 space-y-5">
+                ${foreword.paragraphs
+                  .map(
+                    (paragraph, index) => `
+                      <p ${e(`siteMeta.foreword.paragraphs.${index}`)} class="text-lg leading-relaxed text-[color:var(--ink)]">${paragraph}</p>
+                    `,
+                  )
+                  .join("")}
+              </div>
+              <blockquote class="mt-8 border-l-[3px] border-[color:var(--accent)] pl-6">
+                <p ${e("siteMeta.foreword.pullQuote")} class="font-serif text-xl italic leading-relaxed text-[color:var(--ink)] md:text-2xl">${foreword.pullQuote}</p>
+              </blockquote>
+            </article>
+
+            <aside class="paper-panel reveal-block relative overflow-hidden rounded-[2.4rem] p-4 md:p-5">
+              <div class="overflow-hidden rounded-[2rem]">
+                <img
+                  src="${author.imageSrc}"
+                  alt="${author.imageAlt}"
+                  class="aspect-[4/5] w-full object-cover object-center"
+                />
+              </div>
+              <div class="p-3 md:p-5">
+                <p ${e("siteMeta.author.eyebrow")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${author.eyebrow}</p>
+                <h2 ${e("siteMeta.author.name")} class="mt-3 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${author.name}</h2>
+                <p ${e("siteMeta.author.role")} class="mt-4 text-sm uppercase tracking-[0.24em] text-[color:var(--accent)]">${author.role}</p>
+                <p ${e("siteMeta.author.bio")} class="mt-5 text-lg leading-relaxed text-[color:var(--ink)]">${author.bio}</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+
         <section class="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-20">
           <div class="mb-8 flex items-end justify-between gap-6">
             <div>
@@ -195,7 +273,7 @@
                           <span class="font-display text-lg uppercase tracking-[0.14em] text-[color:var(--accent)]">${stat.display}</span>
                           <span ${e(`stories.main.stats.${si}.label`)} class="ml-2">${stat.label}</span>
                         </div>
-                      `
+                      `,
                     )
                     .join("")}
                 </div>
@@ -219,7 +297,7 @@
           <div class="mb-8 flex items-end justify-between gap-6">
             <div>
               <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Deelverhalen</p>
-              <h2 class="mt-3 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">Twee concrete routes vanuit de praktijk</h2>
+              <h2 class="mt-3 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">Hoe ziet wij zijn het beleid eruit?</h2>
             </div>
           </div>
           <div class="grid gap-6 lg:grid-cols-2">
@@ -235,7 +313,7 @@
                       <a href="${hrefForRoute(story.slug)}" class="font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-opacity hover:opacity-75">Open verhaal</a>
                     </div>
                   </article>
-                `
+                `,
               )
               .join("")}
           </div>
@@ -282,7 +360,7 @@
                           </div>
                           <p ${e(`stories.main.stats.${si}.label`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${stat.label}</p>
                         </article>
-                      `
+                      `,
                     )
                     .join("")}
                 </div>
@@ -333,7 +411,7 @@
                               <div class="${paragraphIndex === 0 ? "story-copy" : ""}">
                                 <p ${e(`stories.${sid}.sections.${index}.paragraphs.${paragraphIndex}`)} class="text-lg leading-relaxed text-[color:var(--ink)] md:text-[1.28rem]">${paragraph}</p>
                               </div>
-                            `
+                            `,
                           )
                           .join("")}
                         <button class="edit-add-para" data-story="${sid}" data-section="${index}">+ Alinea toevoegen</button>
@@ -349,7 +427,7 @@
                         }
                       </div>
                     </section>
-                  `
+                  `,
                 )
                 .join("")}
             </div>
@@ -408,7 +486,7 @@
           }
         });
       },
-      { threshold: 0.16 }
+      { threshold: 0.16 },
     );
 
     document.querySelectorAll(".reveal-block").forEach((element) => {
@@ -437,7 +515,10 @@
     statObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting || entry.target.dataset.started === "true") {
+          if (
+            !entry.isIntersecting ||
+            entry.target.dataset.started === "true"
+          ) {
             return;
           }
 
@@ -452,7 +533,12 @@
           function tick(timestamp) {
             const progress = Math.min((timestamp - start) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
-            entry.target.textContent = formatAnimatedValue(prefix, value * eased, compact, suffix);
+            entry.target.textContent = formatAnimatedValue(
+              prefix,
+              value * eased,
+              compact,
+              suffix,
+            );
 
             if (progress < 1) {
               window.requestAnimationFrame(tick);
@@ -465,7 +551,7 @@
           statObserver.unobserve(entry.target);
         });
       },
-      { threshold: 0.32 }
+      { threshold: 0.32 },
     );
 
     statElements.forEach((element) => statObserver.observe(element));
@@ -538,7 +624,8 @@
     applyTheme(route.theme);
 
     const story = getStoryBySlug(route.slug);
-    const pageMarkup = route.id === "home" ? renderHome() : renderStoryPage(story);
+    const pageMarkup =
+      route.id === "home" ? renderHome() : renderStoryPage(story);
 
     app.innerHTML = `
       ${renderNav(route)}
@@ -600,7 +687,11 @@
         });
       }
     });
-    return "const SITE_CONTENT = " + JSON.stringify(editData, null, 2) + ";\n\nwindow.SITE_CONTENT = SITE_CONTENT;\n";
+    return (
+      "const SITE_CONTENT = " +
+      JSON.stringify(editData, null, 2) +
+      ";\n\nwindow.SITE_CONTENT = SITE_CONTENT;\n"
+    );
   }
 
   function downloadFile(filename, text) {
@@ -771,7 +862,8 @@
     });
 
     clearBtn.addEventListener("click", () => {
-      if (!confirm("Alle wijzigingen wissen? Dit kan niet ongedaan worden.")) return;
+      if (!confirm("Alle wijzigingen wissen? Dit kan niet ongedaan worden."))
+        return;
       // Exit edit mode first to prevent any saves
       editMode = false;
       toggleBtn.textContent = "Bewerken";
@@ -783,7 +875,9 @@
       editData = JSON.parse(JSON.stringify(originalContent));
       content.siteMeta = JSON.parse(JSON.stringify(originalContent.siteMeta));
       Object.keys(originalContent.stories).forEach((key) => {
-        content.stories[key] = JSON.parse(JSON.stringify(originalContent.stories[key]));
+        content.stories[key] = JSON.parse(
+          JSON.stringify(originalContent.stories[key]),
+        );
       });
       skipCollect = true;
       renderRoute();
@@ -799,7 +893,9 @@
       collectEdits();
       applyEditsToContent();
       // Add new paragraph
-      content.stories[storyId].sections[secIdx].paragraphs.push("Nieuwe alinea...");
+      content.stories[storyId].sections[secIdx].paragraphs.push(
+        "Nieuwe alinea...",
+      );
       editData = JSON.parse(JSON.stringify(content));
       saveDraft();
       // Re-render without scrolling to top

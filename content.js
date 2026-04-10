@@ -3,17 +3,51 @@ const SITE_CONTENT = {
     issueLabel: "Optimist web special",
     issueTitle: "Wij zijn het beleid",
     projectLabel: "Afstudeerproject van Job Koskamp",
-    subtitle: "Van theorie naar praktijk, vertaald naar een digitaal magazine.",
+    subtitle:
+      "Van theorie naar praktijk: drie verhalen over beleid dat anders kan.",
     intro:
       "Deze website bundelt een hoofdverhaal en twee deelverhalen over nieuwe manieren van beleidsvorming. Het vertrekpunt is steeds hetzelfde: maatschappelijke vraagstukken worden niet opgelost vanuit een gesloten systeem, maar in samenwerking met mensen die het vraagstuk iedere dag ervaren.",
     editorialNote:
-      "Gebaseerd op de aangeleverde artikelen en vormgegeven in de sfeer van de attached magazine-PDFs: grote koppen, rustige seriftekst en uitgesproken themakleuren per verhaal.",
+      "Grote koppen, rustige seriftekst en uitgesproken themakleuren per verhaal.",
+    magazinePromo: {
+      eyebrow: "Nu te bestellen",
+      headline: "Bestel de Optimist Special Wij zijn het beleid hier.",
+      body: "De Optimist Special brengt het magazine samen in druk: een editie over bestuur, verbeeldingskracht en mensen die beleid van onderop vormgeven.",
+      ctaLabel: "Bestel de special",
+      ctaHref:
+        "https://optimismewerkt.nl/product/optimist-speciale-editie-2025/",
+      imageSrc: "./images/optimist-special-cover.jpeg",
+      imageAlt: "Cover van de Optimist Special Wij zijn het beleid",
+    },
+    foreword: {
+      eyebrow: "Voorwoord",
+      title: "Een persoonlijk vertrekpunt",
+      paragraphs: [
+        "Wat begon als fascinatie voor politiek en bestuur, kantelde voor Job Koskamp langzaam in teleurstelling. Niet omdat politiek stroperig kan zijn, maar omdat het publieke debat vaak verhardt en het echte luisteren te makkelijk plaatsmaakt voor symboolstrijd.",
+        "Tijdens het maken van Wij zijn het beleid ontdekte hij een andere werkelijkheid: buurthuizen, klaslokalen en lokale initiatieven waar mensen niet wachten tot verandering van boven komt, maar zelf verantwoordelijkheid nemen en nieuwe vormen van beleid in de praktijk laten ontstaan.",
+        "Deze web special brengt die verhalen samen als tegengif tegen cynisme. Ze laten zien dat beleid niet alleen in vergaderzalen ontstaat, maar juist ook in relaties, samenwerking en de moed om anders te beginnen.",
+      ],
+      pullQuote: "Want beleid zijn wij allemaal. Wij zijn het beleid.",
+    },
+    author: {
+      eyebrow: "Over de maker",
+      name: "Job Koskamp",
+      role: "Journalistiek afstudeerder en maker van deze web special",
+      bio: "Job Koskamp ontwikkelde dit afstudeerproject als redactionele vertaling van zijn onderzoek naar beleid, bottom-up initiatieven en de vraag hoe maatschappelijke verandering er menselijker uit kan zien.",
+      imageSrc: "./images/job-koskamp.jpeg",
+      imageAlt: "Portret van Job Koskamp",
+    },
   },
   routes: [
     { id: "home", slug: "", label: "Home", theme: "home" },
-    { id: "main", slug: "verhaal", label: "Hoofdverhaal", theme: "main" },
+    { id: "main", slug: "verhaal", label: "De kern", theme: "main" },
     { id: "lansco", slug: "lansco", label: "LaNSCO", theme: "lansco" },
-    { id: "markemodel", slug: "markemodel", label: "Markemodel", theme: "markemodel" },
+    {
+      id: "markemodel",
+      slug: "markemodel",
+      label: "Markemodel",
+      theme: "markemodel",
+    },
   ],
   themes: {
     home: {
@@ -69,14 +103,14 @@ const SITE_CONTENT = {
     main: {
       id: "main",
       slug: "verhaal",
-      label: "Hoofdverhaal",
+      label: "De kern",
       theme: "main",
-      title: "Wicked problems: hoe lossen we ingewikkelde maatschappelijke vraagstukken op?",
+      title:
+        "Wicked problems: hoe lossen we ingewikkelde maatschappelijke vraagstukken op?",
       shortTitle: "Wicked problems",
-      dek:
-        "Van Rotterdamse schuldhulp tot het Nationaal Burgerberaad Klimaat: het hoofdverhaal volgt de vraag hoe beleid anders kan ontstaan wanneer overheden burgers, experts en initiatiefnemers niet pas achteraf maar vanaf het begin meenemen.",
+      dek: "Van Rotterdamse schuldhulp tot het Nationaal Burgerberaad Klimaat: het hoofdverhaal volgt de vraag hoe beleid anders kan ontstaan wanneer overheden burgers, experts en initiatiefnemers niet pas achteraf maar vanaf het begin meenemen.",
       byline: "Door Job Koskamp",
-      kicker: "Hoofdverhaal",
+      kicker: "De kern",
       summary:
         "Een lang verhaal over open multi-stakeholderbeleid, lokale experimenten en de veranderende rol van ambtenaren en politiek.",
       stats: [
@@ -94,7 +128,8 @@ const SITE_CONTENT = {
           prefix: "",
           suffix: "%",
           compact: "70",
-          label: "stijging van jongeren met problematische schulden in vijf jaar",
+          label:
+            "stijging van jongeren met problematische schulden in vijf jaar",
         },
         {
           value: 10000,
@@ -174,8 +209,7 @@ const SITE_CONTENT = {
       theme: "lansco",
       title: "Meer dan een uitkering: hoe mensen weer waardevol worden",
       shortTitle: "LaNSCO",
-      dek:
-        "Sociale cooperaties bieden mensen in de bijstand een route naar ondernemerschap, zelfvertrouwen en zingeving. Het verhaal laat zien hoe dat model werkt en waarom gemeenten er anders naar moeten kijken.",
+      dek: "Sociale cooperaties bieden mensen in de bijstand een route naar ondernemerschap, zelfvertrouwen en zingeving. Het verhaal laat zien hoe dat model werkt en waarom gemeenten er anders naar moeten kijken.",
       byline: "Door Job Koskamp",
       kicker: "Deelverhaal 01",
       summary:
@@ -241,8 +275,7 @@ const SITE_CONTENT = {
       theme: "markemodel",
       title: "Landbouw in balans: het experiment dat wel werkt?",
       shortTitle: "Markemodel",
-      dek:
-        "Terwijl het landbouwdebat in Nederland op scherp stond, werkte men in de Achterhoek aan een model waarin boeren, overheden en andere partijen gezamenlijk doelen, beloningen en eigenaarschap organiseerden.",
+      dek: "Terwijl het landbouwdebat in Nederland op scherp stond, werkte men in de Achterhoek aan een model waarin boeren, overheden en andere partijen gezamenlijk doelen, beloningen en eigenaarschap organiseerden.",
       byline: "Door Job Koskamp",
       kicker: "Deelverhaal 02",
       summary:
