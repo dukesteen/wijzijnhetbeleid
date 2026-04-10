@@ -19,7 +19,7 @@ const SITE_CONTENT = {
     home: {
       paper: "#f5ecdf",
       paperStrong: "#e8d7c8",
-      surface: "rgba(255, 255, 255, 0.78)",
+      surface: "#faf6f0",
       ink: "#111111",
       muted: "rgba(17, 17, 17, 0.68)",
       accent: "#c21d34",
@@ -31,7 +31,7 @@ const SITE_CONTENT = {
     main: {
       paper: "#f7efdf",
       paperStrong: "#efdfcb",
-      surface: "rgba(255, 255, 255, 0.74)",
+      surface: "#faf5ed",
       ink: "#171413",
       muted: "rgba(23, 20, 19, 0.7)",
       accent: "#9f2d24",
@@ -43,7 +43,7 @@ const SITE_CONTENT = {
     lansco: {
       paper: "#d8e8f1",
       paperStrong: "#c6dce8",
-      surface: "rgba(255, 255, 255, 0.72)",
+      surface: "#f0ece6",
       ink: "#103043",
       muted: "rgba(16, 48, 67, 0.72)",
       accent: "#0e5e81",
@@ -55,7 +55,7 @@ const SITE_CONTENT = {
     markemodel: {
       paper: "#e4efdf",
       paperStrong: "#d0e2c6",
-      surface: "rgba(255, 255, 255, 0.72)",
+      surface: "#f0ece6",
       ink: "#16311f",
       muted: "rgba(22, 49, 31, 0.72)",
       accent: "#1b6b34",
