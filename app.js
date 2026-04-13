@@ -142,16 +142,19 @@
                 <span class="rounded-full bg-[color:var(--accent)] px-5 py-2 font-display text-sm uppercase tracking-[0.28em] text-[color:var(--accent-contrast)]">web special</span>
               </div>
               <p ${e("siteMeta.intro")} class="mt-6 max-w-3xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${content.siteMeta.intro}</p>
+              ${content.siteMeta.subtitle || content.siteMeta.editorialNote ? `
               <div class="mt-8 grid max-w-3xl gap-4 sm:grid-cols-2">
+                ${content.siteMeta.subtitle ? `
                 <div class="paper-panel reveal-block relative overflow-hidden rounded-[2rem] p-6">
                   <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Kern van het project</p>
                   <p ${e("siteMeta.subtitle")} class="mt-3 text-lg leading-relaxed text-[color:var(--ink)]">${content.siteMeta.subtitle}</p>
-                </div>
+                </div>` : ""}
+                ${content.siteMeta.editorialNote ? `
                 <div class="paper-panel reveal-block relative overflow-hidden rounded-[2rem] p-6">
                   <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Vormtaal</p>
                   <p ${e("siteMeta.editorialNote")} class="mt-3 text-lg leading-relaxed text-[color:var(--ink)]">${content.siteMeta.editorialNote}</p>
-                </div>
-              </div>
+                </div>` : ""}
+              </div>` : ""}
             </div>
             <aside class="paper-panel reveal-block relative overflow-hidden rounded-[2.4rem] p-8">
               <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Issue navigation</p>
@@ -265,6 +268,7 @@
               <div class="relative z-10">
                 <p ${e("stories.main.kicker")} class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${mainStory.kicker}</p>
                 <p ${e("stories.main.dek")} class="mt-4 max-w-3xl text-lg leading-relaxed text-[color:var(--ink)] md:text-xl">${mainStory.dek}</p>
+                ${mainStory.stats.length ? `
                 <div class="mt-8 flex flex-wrap gap-3">
                   ${mainStory.stats
                     .map(
@@ -276,18 +280,20 @@
                       `,
                     )
                     .join("")}
-                </div>
+                </div>` : ""}
+                <a href="${hrefForRoute(mainStory.slug)}" class="mt-8 inline-flex rounded-full bg-[color:var(--accent)] px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent-contrast)] transition-opacity hover:opacity-85 md:hidden">Lees het verhaal</a>
               </div>
-              <div class="grid gap-5">
-                <div class="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--paper-strong)] p-6">
-                  <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Wat je krijgt</p>
-                  <ul class="mt-4 space-y-3 text-lg leading-relaxed text-[color:var(--ink)]">
-                    <li>Een lang hoofdverhaal over open multi-stakeholderbeleid.</li>
-                    <li>Twee praktische deelverhalen over sociale cooperaties en landbouwbeleid.</li>
-                    <li>Een redactionele vormtaal met uitgesproken themakleuren per verhaal.</li>
-                  </ul>
-                </div>
-                <a href="${hrefForRoute(mainStory.slug)}" class="inline-flex w-fit rounded-full bg-[color:var(--accent)] px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent-contrast)] transition-opacity hover:opacity-85 md:hidden">Lees het verhaal</a>
+              <div class="overflow-hidden rounded-[2rem]">
+                ${mainStory.heroImage
+                  ? `<img src="${mainStory.heroImage.src}" alt="${mainStory.heroImage.alt}" class="w-full h-full object-cover aspect-[4/3]" />`
+                  : `<div class="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--paper-strong)] p-6">
+                      <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Wat je krijgt</p>
+                      <ul class="mt-4 space-y-3 text-lg leading-relaxed text-[color:var(--ink)]">
+                        <li>Een lang hoofdverhaal over open multi-stakeholderbeleid.</li>
+                        <li>Twee praktische deelverhalen over sociale co\u00f6peraties en landbouwbeleid.</li>
+                      </ul>
+                    </div>`
+                }
               </div>
             </div>
           </article>
@@ -346,7 +352,23 @@
         </section>
 
         ${
-          isMainStory
+          story.heroImage
+            ? `
+              <section class="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-12">
+                <div class="overflow-hidden rounded-[2rem] shadow-editorial">
+                  <img
+                    src="${story.heroImage.src}"
+                    alt="${story.heroImage.alt}"
+                    class="w-full max-h-[40rem] object-cover"
+                  />
+                </div>
+              </section>
+            `
+            : ""
+        }
+
+        ${
+          isMainStory && story.stats && story.stats.length
             ? `
               <section class="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
                 <div class="grid gap-5 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
@@ -405,6 +427,20 @@
                       </div>
                       <h2 ${e(`stories.${sid}.sections.${index}.heading`)} class="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">${section.heading}</h2>
                       <div class="mt-8 space-y-6">
+                      ${
+                        section.sectionImage
+                          ? `
+                            <figure class="float-right ml-6 mb-4 w-2/5 max-w-[240px] overflow-hidden rounded-[1.2rem] md:max-w-[280px]">
+                              <img
+                                src="${section.sectionImage.src}"
+                                alt="${section.sectionImage.alt}"
+                                class="w-full aspect-[3/4] object-cover object-top"
+                              />
+                              ${section.sectionImage.alt ? `<figcaption class="mt-2 text-xs text-[color:var(--muted)] text-center">${section.sectionImage.alt}</figcaption>` : ""}
+                            </figure>
+                          `
+                          : ""
+                      }
                         ${section.paragraphs
                           .map(
                             (paragraph, paragraphIndex) => `
@@ -414,7 +450,7 @@
                             `,
                           )
                           .join("")}
-                        <button class="edit-add-para" data-story="${sid}" data-section="${index}">+ Alinea toevoegen</button>
+                        ${editMode ? `<button class="edit-add-para visible" data-story="${sid}" data-section="${index}">+ Alinea toevoegen</button>` : ""}
                         ${
                           section.pullQuote
                             ? `
@@ -446,11 +482,11 @@
               .map((id) => {
                 const related = content.stories[id];
                 return `
-                  <article data-reveal class="paper-panel card-hover reveal-block rounded-[2.2rem] p-7">
+                  <article data-reveal class="paper-panel card-hover reveal-block rounded-[2.2rem] p-7 flex flex-col h-full">
                     <p ${e(`stories.${id}.kicker`)} class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">${related.kicker}</p>
                     <h3 ${e(`stories.${id}.title`)} class="mt-4 font-display text-3xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${related.title}</h3>
-                    <p ${e(`stories.${id}.summary`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${related.summary}</p>
-                    <a href="${hrefForRoute(related.slug)}" class="mt-6 inline-flex rounded-full border border-[color:var(--accent)] px-5 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--accent-contrast)]">Open verhaal</a>
+                    <p ${e(`stories.${id}.summary`)} class="mt-4 flex-1 text-lg leading-relaxed text-[color:var(--ink)]">${related.summary}</p>
+                    <a href="${hrefForRoute(related.slug)}" class="mt-6 inline-flex rounded-full border border-[color:var(--accent)] px-5 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--accent-contrast)] w-fit">Open verhaal</a>
                   </article>
                 `;
               })
@@ -639,6 +675,7 @@
     skipScroll = false;
     mountRevealAnimations();
     mountStatCounters();
+    mountTooltips();
     bindProgressBar(route);
 
     if (editMode) {
@@ -651,6 +688,111 @@
     content.siteMeta = JSON.parse(JSON.stringify(editData.siteMeta));
     Object.keys(editData.stories).forEach((key) => {
       content.stories[key] = JSON.parse(JSON.stringify(editData.stories[key]));
+    });
+  }
+
+  // ─── Tooltips & Story Links CSS ──────────────────────────
+  (function injectInteractiveStyles() {
+    const s = document.createElement("style");
+    s.textContent = `
+      .story-link {
+        color: var(--accent);
+        text-decoration: underline;
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 2px;
+        transition: opacity 0.15s;
+      }
+      .story-link:hover { opacity: 0.75; }
+      .tooltip-trigger {
+        color: var(--accent);
+        border-bottom: 1.5px dashed var(--accent);
+        cursor: help;
+        position: relative;
+      }
+      .tooltip-trigger:hover { opacity: 0.8; }
+      .tooltip-popup {
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: max(280px, min(90vw, 420px));
+        background: var(--ink, #111);
+        color: var(--surface, #faf6f0);
+        font-size: 0.875rem;
+        line-height: 1.6;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+        z-index: 100;
+        pointer-events: auto;
+        opacity: 0;
+        animation: tooltipIn 0.18s ease forwards;
+      }
+      .tooltip-popup::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 8px solid transparent;
+        border-top-color: var(--ink, #111);
+      }
+      @keyframes tooltipIn {
+        from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+      }
+      .shadow-editorial {
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      }
+    `;
+    document.head.appendChild(s);
+  })();
+
+  // ─── Tooltip Mounting ──────────────────────────────────────
+  function mountTooltips() {
+    document.querySelectorAll(".tooltip-trigger").forEach((trigger) => {
+      const tooltipId = trigger.dataset.tooltip;
+      // Find tooltip data from story content
+      const route = getRouteFromHash();
+      const story = getStoryBySlug(route.slug);
+      if (!story) return;
+
+      let tooltipContent = "";
+      for (const section of story.sections) {
+        if (section.tooltips) {
+          const match = section.tooltips.find((t) => t.id === tooltipId);
+          if (match) {
+            tooltipContent = match.content;
+            break;
+          }
+        }
+      }
+      if (!tooltipContent) return;
+
+      let popup = null;
+
+      function show() {
+        if (popup) return;
+        popup = document.createElement("div");
+        popup.className = "tooltip-popup";
+        popup.textContent = tooltipContent;
+        trigger.style.position = "relative";
+        trigger.appendChild(popup);
+      }
+
+      function hide() {
+        if (popup) {
+          popup.remove();
+          popup = null;
+        }
+      }
+
+      trigger.addEventListener("mouseenter", show);
+      trigger.addEventListener("mouseleave", hide);
+      trigger.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        popup ? hide() : show();
+      });
     });
   }
 
