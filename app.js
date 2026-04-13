@@ -93,7 +93,12 @@
             <span ${e("siteMeta.issueLabel")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueLabel}</span>
             <span ${e("siteMeta.issueTitle")} class="font-display text-2xl uppercase tracking-[0.04em] text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--accent)]">${content.siteMeta.issueTitle}</span>
           </a>
-          <nav class="flex flex-wrap items-center justify-end gap-x-2 gap-y-2 text-sm md:text-base">
+          <button id="burger-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px]" aria-label="Menu">
+            <span class="burger-line block w-6 h-[2px] bg-[color:var(--ink)] transition-all"></span>
+            <span class="burger-line block w-6 h-[2px] bg-[color:var(--ink)] transition-all"></span>
+            <span class="burger-line block w-6 h-[2px] bg-[color:var(--ink)] transition-all"></span>
+          </button>
+          <nav class="hidden md:flex flex-wrap items-center justify-end gap-x-2 gap-y-2 text-base">
             ${content.routes
               .map((item) => {
                 const isActive = item.id === route.id;
@@ -113,6 +118,27 @@
               .join("")}
           </nav>
         </div>
+        <nav id="mobile-menu" class="mobile-menu md:hidden">
+          <div class="mx-auto max-w-7xl flex flex-col gap-2 px-5 pb-5">
+            ${content.routes
+              .map((item) => {
+                const isActive = item.id === route.id;
+                return `
+                  <a
+                    href="${hrefForRoute(item.slug)}"
+                    class="rounded-xl border px-5 py-3 font-display text-sm uppercase tracking-[0.2em] transition-colors ${
+                      isActive
+                        ? "border-transparent bg-[color:var(--accent)] text-[color:var(--accent-contrast)]"
+                        : "border-[color:var(--line)] text-[color:var(--ink)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+                    }"
+                  >
+                    ${item.label}
+                  </a>
+                `;
+              })
+              .join("")}
+          </div>
+        </nav>
         <div class="progress-rail h-1 ${isArticle ? "" : "opacity-0"}">
           <div id="progress-bar" class="progress-bar h-full w-0"></div>
         </div>
@@ -138,7 +164,7 @@
             <div class="relative z-10">
               <p ${e("siteMeta.projectLabel")} class="font-display text-sm uppercase tracking-[0.34em] text-[color:var(--muted)]">${content.siteMeta.projectLabel}</p>
               <div class="mt-4 flex flex-wrap items-end gap-x-4 gap-y-2">
-                <h1 class="display-shadow font-display text-6xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-7xl lg:text-[7.25rem]">${content.siteMeta.issueTitle}</h1>
+                <h1 class="display-shadow font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-6xl md:text-7xl lg:text-[7.25rem]">${content.siteMeta.issueTitle}</h1>
                 <span class="rounded-full bg-[color:var(--accent)] px-5 py-2 font-display text-sm uppercase tracking-[0.28em] text-[color:var(--accent-contrast)]">web special</span>
               </div>
               <p ${e("siteMeta.intro")} class="mt-6 max-w-3xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${content.siteMeta.intro}</p>
@@ -198,7 +224,7 @@
               </a>
               <div class="relative z-10">
                 <p ${e("siteMeta.magazinePromo.eyebrow")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${magazinePromo.eyebrow}</p>
-                <h2 ${e("siteMeta.magazinePromo.headline")} class="mt-4 max-w-3xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-6xl">${magazinePromo.headline}</h2>
+                <h2 ${e("siteMeta.magazinePromo.headline")} class="mt-4 max-w-3xl font-display text-2xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-6xl">${magazinePromo.headline}</h2>
                 <p ${e("siteMeta.magazinePromo.body")} class="mt-5 max-w-2xl text-lg leading-relaxed text-[color:var(--ink)] md:text-xl">${magazinePromo.body}</p>
                 <div class="mt-8 flex flex-wrap items-center gap-4">
                   <a
@@ -220,7 +246,7 @@
           <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <article class="paper-panel reveal-block relative overflow-hidden rounded-[2.4rem] p-7 md:p-9">
               <p ${e("siteMeta.foreword.eyebrow")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${foreword.eyebrow}</p>
-              <h2 ${e("siteMeta.foreword.title")} class="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">${foreword.title}</h2>
+              <h2 ${e("siteMeta.foreword.title")} class="mt-4 font-display text-2xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-5xl">${foreword.title}</h2>
               <div class="mt-7 space-y-5">
                 ${foreword.paragraphs
                   .map(
@@ -257,7 +283,7 @@
           <div class="mb-8 flex items-end justify-between gap-6">
             <div>
               <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Uitgelicht</p>
-              <h2 ${e("stories.main.title")} class="mt-3 max-w-3xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-6xl">${mainStory.title}</h2>
+              <h2 ${e("stories.main.title")} class="mt-3 max-w-3xl font-display text-2xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-6xl">${mainStory.title}</h2>
             </div>
             <a href="${hrefForRoute(mainStory.slug)}" class="hidden rounded-full border border-[color:var(--accent)] px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--accent-contrast)] md:inline-flex">Lees het verhaal</a>
           </div>
@@ -303,7 +329,7 @@
           <div class="mb-8 flex items-end justify-between gap-6">
             <div>
               <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Deelverhalen</p>
-              <h2 class="mt-3 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">Hoe ziet wij zijn het beleid eruit?</h2>
+              <h2 class="mt-3 font-display text-2xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-5xl">Hoe ziet wij zijn het beleid eruit?</h2>
             </div>
           </div>
           <div class="grid gap-6 lg:grid-cols-2">
@@ -341,8 +367,8 @@
             </div>
             <div class="relative z-10">
               <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueTitle} \u2022 ${story.kicker}</p>
-              <h1 ${e(`stories.${sid}.title`)} class="display-shadow mt-5 max-w-5xl font-display text-5xl uppercase leading-[0.92] tracking-[-0.05em] text-[color:var(--ink)] sm:text-6xl lg:text-[6.4rem]">${story.title}</h1>
-              <p ${e(`stories.${sid}.dek`)} class="mt-6 max-w-4xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${story.dek}</p>
+              <h1 ${e(`stories.${sid}.title`)} class="display-shadow mt-5 max-w-5xl font-display text-3xl uppercase leading-[0.92] tracking-[-0.05em] text-[color:var(--ink)] sm:text-5xl md:text-6xl lg:text-[6.4rem]">${story.title}</h1>
+              <p ${e(`stories.${sid}.dek`)} class="mt-6 max-w-4xl text-lg leading-relaxed text-[color:var(--muted)] md:text-2xl">${story.dek}</p>
               <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[color:var(--line)] pt-5 text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">
                 <span ${e(`stories.${sid}.byline`)}>${story.byline}</span>
                 <span>${content.siteMeta.projectLabel}</span>
@@ -393,7 +419,7 @@
 
         <section class="mx-auto max-w-7xl px-5 md:px-8">
           <article id="story-article" class="grid gap-8 lg:grid-cols-[0.24fr_1fr]">
-            <aside class="space-y-6 lg:sticky lg:top-28 lg:self-start">
+            <aside class="hidden lg:block space-y-6 lg:sticky lg:top-28 lg:self-start">
               <div data-reveal class="paper-panel reveal-block rounded-[2rem] p-6">
                 <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Route</p>
                 <ul class="mt-5 space-y-3 text-sm uppercase tracking-[0.22em] text-[color:var(--muted)]">
@@ -425,16 +451,16 @@
                             : ""
                         }
                       </div>
-                      <h2 ${e(`stories.${sid}.sections.${index}.heading`)} class="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">${section.heading}</h2>
+                      <h2 ${e(`stories.${sid}.sections.${index}.heading`)} class="mt-4 font-display text-2xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-5xl">${section.heading}</h2>
                       <div class="mt-8 space-y-6">
                       ${
                         section.sectionImage
                           ? `
-                            <figure class="float-right ml-6 mb-4 w-2/5 max-w-[240px] overflow-hidden rounded-[1.2rem] md:max-w-[280px]">
+                            <figure class="mb-4 w-full overflow-hidden rounded-[1.2rem] md:float-right md:ml-6 md:w-2/5 md:max-w-[280px]">
                               <img
                                 src="${section.sectionImage.src}"
                                 alt="${section.sectionImage.alt}"
-                                class="w-full aspect-[3/4] object-cover object-top"
+                                class="w-full aspect-[3/4] object-cover object-top md:aspect-[3/4] max-h-[16rem] md:max-h-none"
                               />
                               ${section.sectionImage.alt ? `<figcaption class="mt-2 text-xs text-[color:var(--muted)] text-center">${section.sectionImage.alt}</figcaption>` : ""}
                             </figure>
@@ -474,7 +500,7 @@
           <div class="mb-7 flex items-end justify-between gap-6">
             <div>
               <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Lees verder</p>
-              <h2 class="mt-3 font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] md:text-5xl">Verwante verhalen</h2>
+              <h2 class="mt-3 font-display text-2xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-5xl">Verwante verhalen</h2>
             </div>
           </div>
           <div class="grid gap-6 md:grid-cols-2">
@@ -676,6 +702,7 @@
     mountRevealAnimations();
     mountStatCounters();
     mountTooltips();
+    mountBurgerMenu();
     bindProgressBar(route);
 
     if (editMode) {
@@ -744,6 +771,24 @@
       .shadow-editorial {
         box-shadow: 0 4px 24px rgba(0,0,0,0.10);
       }
+      .mobile-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        border-bottom: 1px solid var(--line);
+      }
+      .mobile-menu.open {
+        max-height: 320px;
+      }
+      .burger-open .burger-line:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .burger-open .burger-line:nth-child(2) {
+        opacity: 0;
+      }
+      .burger-open .burger-line:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
     `;
     document.head.appendChild(s);
   })();
@@ -792,6 +837,25 @@
       trigger.addEventListener("click", (ev) => {
         ev.preventDefault();
         popup ? hide() : show();
+      });
+    });
+  }
+
+  function mountBurgerMenu() {
+    const btn = document.getElementById("burger-btn");
+    const menu = document.getElementById("mobile-menu");
+    if (!btn || !menu) return;
+
+    btn.addEventListener("click", () => {
+      menu.classList.toggle("open");
+      btn.classList.toggle("burger-open");
+    });
+
+    // Close menu when a link is clicked
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        menu.classList.remove("open");
+        btn.classList.remove("burger-open");
       });
     });
   }
