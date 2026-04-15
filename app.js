@@ -94,22 +94,24 @@
             <span ${e("siteMeta.issueLabel")} class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueLabel}</span>
             <span ${e("siteMeta.issueTitle")} class="font-display text-2xl uppercase tracking-[0.04em] text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--accent)]">${content.siteMeta.issueTitle}</span>
           </a>
-          <button id="burger-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px]" aria-label="Menu">
+          <button id="burger-btn" class="lg:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px]" aria-label="Menu">
             <span class="burger-line block w-6 h-[2px] bg-[color:var(--ink)] transition-all"></span>
             <span class="burger-line block w-6 h-[2px] bg-[color:var(--ink)] transition-all"></span>
             <span class="burger-line block w-6 h-[2px] bg-[color:var(--ink)] transition-all"></span>
           </button>
-          <nav class="hidden md:flex flex-wrap items-center justify-end gap-x-2 gap-y-2 text-base">
+          <nav class="hidden lg:flex flex-nowrap items-center justify-end gap-x-2 text-sm">
             ${content.navItems
               .map((item) => {
                 const isActive = item.action === "home" && route.id === "home";
                 const href = item.action === "home" ? "#/" : "#/";
                 const scrollAttr = item.anchor ? `data-scroll-target="${item.anchor}"` : "";
+                const navId = item.anchor || "home";
                 return `
                   <a
                     href="${href}"
                     ${scrollAttr}
-                    class="rounded-full border px-4 py-2 font-display uppercase tracking-[0.2em] transition-colors ${
+                    data-nav-item="${navId}"
+                    class="rounded-full border px-3 py-1.5 font-display uppercase tracking-[0.14em] transition-colors whitespace-nowrap ${
                       isActive
                         ? "border-transparent bg-[color:var(--accent)] text-[color:var(--accent-contrast)]"
                         : "border-[color:var(--line)] text-[color:var(--ink)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
@@ -122,17 +124,19 @@
               .join("")}
           </nav>
         </div>
-        <nav id="mobile-menu" class="mobile-menu md:hidden">
+        <nav id="mobile-menu" class="mobile-menu lg:hidden">
           <div class="mx-auto max-w-7xl flex flex-col gap-2 px-5 pb-5">
             ${content.navItems
               .map((item) => {
                 const isActive = item.action === "home" && route.id === "home";
                 const href = item.action === "home" ? "#/" : "#/";
                 const scrollAttr = item.anchor ? `data-scroll-target="${item.anchor}"` : "";
+                const navId = item.anchor || "home";
                 return `
                   <a
                     href="${href}"
                     ${scrollAttr}
+                    data-nav-item="${navId}"
                     class="rounded-xl border px-5 py-3 font-display text-sm uppercase tracking-[0.2em] transition-colors ${
                       isActive
                         ? "border-transparent bg-[color:var(--accent)] text-[color:var(--accent-contrast)]"
@@ -638,6 +642,8 @@
 
   let skipCollect = false;
 
+  let detachScrollSpy = () => {};
+
   function mountNavScrollHandlers() {
     document.querySelectorAll("[data-scroll-target]").forEach((link) => {
       link.addEventListener("click", (e) => {
@@ -659,6 +665,42 @@
         }
       });
     });
+
+    // Scroll spy for active nav state on homepage
+    detachScrollSpy();
+    const route = getRouteFromHash();
+    if (route.id !== "home") return;
+
+    const sectionIds = ["achtergrond", "de-praktijk", "over-de-maker", "optimist-special"];
+    const onScroll = () => {
+      const scrollY = window.scrollY + 200;
+      let activeAnchor = null;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollY) {
+          activeAnchor = id;
+        }
+      }
+      // Update nav links
+      document.querySelectorAll("[data-nav-item]").forEach((link) => {
+        const itemAnchor = link.dataset.navItem;
+        const isActive = itemAnchor === (activeAnchor || "home");
+        if (isActive) {
+          link.className = link.className
+            .replace("border-[color:var(--line)] text-[color:var(--ink)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]", "")
+            .replace("border-transparent bg-[color:var(--accent)] text-[color:var(--accent-contrast)]", "")
+            + " border-transparent bg-[color:var(--accent)] text-[color:var(--accent-contrast)]";
+        } else {
+          link.className = link.className
+            .replace("border-transparent bg-[color:var(--accent)] text-[color:var(--accent-contrast)]", "")
+            .replace("border-[color:var(--line)] text-[color:var(--ink)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]", "")
+            + " border-[color:var(--line)] text-[color:var(--ink)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]";
+        }
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    detachScrollSpy = () => window.removeEventListener("scroll", onScroll);
+    onScroll();
   }
 
   function renderRoute() {
