@@ -353,68 +353,40 @@
           </div>
         </section>
 
-        ${
-          story.heroImage
-            ? `
-              <section class="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-12">
-                <div class="overflow-hidden rounded-[2rem] shadow-editorial">
-                  <img
-                    src="${story.heroImage.src}"
-                    alt="${story.heroImage.alt}"
-                    class="w-full max-h-[40rem] object-cover"
-                  />
-                </div>
-              </section>
-            `
-            : ""
-        }
-
-        ${
-          isMainStory && story.stats && story.stats.length
-            ? `
-              <section class="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
-                <div class="grid gap-5 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
-                  ${story.stats
-                    .map(
-                      (stat, si) => `
-                        <article data-reveal class="paper-panel reveal-block rounded-[2rem] p-6 md:p-8">
-                          <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Kerncijfer</p>
-                          <div class="mt-5 font-display text-5xl uppercase leading-none tracking-[-0.04em] text-[color:var(--accent)] md:text-6xl">
-                            <span class="js-stat" data-value="${stat.value}" data-prefix="${stat.prefix}" data-suffix="${stat.suffix}" data-compact="${stat.compact}">0</span>
-                          </div>
-                          <p ${e(`stories.main.stats.${si}.label`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${stat.label}</p>
-                        </article>
-                      `,
-                    )
-                    .join("")}
-                </div>
-              </section>
-            `
-            : ""
-        }
-
-        <section class="mx-auto max-w-7xl px-5 md:px-8">
+        <section class="mx-auto max-w-7xl px-5 pt-8 md:px-8 md:pt-12">
           <article id="story-article" class="grid gap-8 lg:grid-cols-[0.24fr_1fr]">
             <aside class="hidden lg:block space-y-6 lg:sticky lg:top-28 lg:self-start">
               <div data-reveal class="paper-panel reveal-block rounded-[2rem] p-6">
-                <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Route</p>
-                <ul class="mt-5 space-y-3 text-sm uppercase tracking-[0.22em] text-[color:var(--muted)]">
-                  <li><a href="#/" class="transition-colors hover:text-[color:var(--accent)]">Terug naar home</a></li>
-                  ${story.relatedStories
-                    .map((id) => {
-                      const related = content.stories[id];
-                      return `<li><a href="${hrefForRoute(related.slug)}" class="transition-colors hover:text-[color:var(--accent)]">${related.shortTitle}</a></li>`;
-                    })
-                    .join("")}
-                </ul>
-              </div>
-              <div data-reveal class="paper-panel reveal-block rounded-[2rem] p-6">
-                <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">In een zin</p>
+                <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Samengevat</p>
                 <p ${e(`stories.${sid}.summary`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
               </div>
             </aside>
 
             <div class="space-y-12 md:space-y-16">
+              ${story.heroImage ? `
+              <div class="overflow-hidden rounded-[2rem] shadow-editorial">
+                <img
+                  src="${story.heroImage.src}"
+                  alt="${story.heroImage.alt}"
+                  class="w-full max-h-[40rem] object-cover"
+                />
+              </div>` : ""}
+              ${isMainStory && story.stats && story.stats.length ? `
+              <div class="grid gap-5 sm:grid-cols-3">
+                ${story.stats
+                  .map(
+                    (stat, si) => `
+                      <article data-reveal class="paper-panel reveal-block rounded-[2rem] p-6 md:p-8">
+                        <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Kerncijfer</p>
+                        <div class="mt-5 font-display text-5xl uppercase leading-none tracking-[-0.04em] text-[color:var(--accent)] md:text-6xl">
+                          <span class="js-stat" data-value="${stat.value}" data-prefix="${stat.prefix}" data-suffix="${stat.suffix}" data-compact="${stat.compact}">0</span>
+                        </div>
+                        <p ${e(`stories.main.stats.${si}.label`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${stat.label}</p>
+                      </article>
+                    `,
+                  )
+                  .join("")}
+              </div>` : ""}
               ${story.sections
                 .map(
                   (section, index) => `
