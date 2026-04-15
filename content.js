@@ -48,6 +48,13 @@ const SITE_CONTENT = {
       theme: "markemodel",
     },
   ],
+  navItems: [
+    { label: "Home", action: "home" },
+    { label: "Achtergrond", anchor: "achtergrond" },
+    { label: "De praktijk", anchor: "de-praktijk" },
+    { label: "Over de maker", anchor: "over-de-maker" },
+    { label: "Optimist Special", anchor: "optimist-special" },
+  ],
   themes: {
     home: {
       paper: "#f5ecdf",
