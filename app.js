@@ -179,9 +179,9 @@
                 <h1 class="display-shadow font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-6xl md:text-7xl lg:text-[7.25rem]">${content.siteMeta.issueTitle}</h1>
                 <span class="rounded-full bg-[color:var(--accent)] px-5 py-2 font-display text-sm uppercase tracking-[0.28em] text-[color:var(--accent-contrast)]">web special</span>
               </div>
-              <p ${e("siteMeta.intro")} class="mx-auto mt-6 max-w-3xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${content.siteMeta.intro}</p>
             </div>
-            <div class="mx-auto mt-10 max-w-2xl">
+            <div class="mt-10 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+              <p ${e("siteMeta.intro")} class="mx-auto max-w-3xl text-xl leading-relaxed text-[color:var(--muted)] md:text-2xl">${content.siteMeta.intro}</p>
               <aside class="paper-panel reveal-block relative overflow-hidden rounded-[2.4rem] p-8">
                 <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">De verhalen</p>
                 <div class="mt-5 editorial-rule w-full"></div>
