@@ -645,6 +645,22 @@
   let detachScrollSpy = () => {};
 
   function mountNavScrollHandlers() {
+    // Home button: scroll to top when already on homepage
+    document.querySelectorAll('[data-nav-item="home"]').forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const route = getRouteFromHash();
+        if (route.id === "home") {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          // Close mobile menu if open
+          const mobileMenu = document.getElementById("mobile-menu");
+          if (mobileMenu) mobileMenu.classList.remove("open");
+          const burger = document.getElementById("burger-btn");
+          if (burger) burger.classList.remove("burger-open");
+        }
+      });
+    });
+
     document.querySelectorAll("[data-scroll-target]").forEach((link) => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
