@@ -348,10 +348,10 @@
           <div class="accent-wash absolute inset-0"></div>
           <div class="mx-auto grid max-w-7xl gap-10 px-5 py-10 md:px-8 md:py-16 lg:grid-cols-[0.18fr_1fr]">
             <div class="hidden justify-center lg:flex">
-              <span class="vertical-label font-display text-xs uppercase tracking-[0.36em] text-[color:var(--muted)]">${story.kicker} \u2022 ${story.shortTitle}</span>
+              <span class="vertical-label font-display text-xs uppercase tracking-[0.36em] text-[color:var(--muted)]">${content.siteMeta.issueTitle} \u2022 ${story.shortTitle}</span>
             </div>
             <div class="relative z-10">
-              <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueTitle} \u2022 ${story.kicker}</p>
+              <p class="font-display text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">${content.siteMeta.issueTitle} \u2022 ${story.shortTitle}</p>
               <h1 ${e(`stories.${sid}.title`)} class="display-shadow mt-5 max-w-5xl font-display text-3xl uppercase leading-[0.92] tracking-[-0.05em] text-[color:var(--ink)] sm:text-5xl md:text-6xl lg:text-[6.4rem]">${story.title}</h1>
               <p ${e(`stories.${sid}.dek`)} class="mt-6 max-w-4xl text-lg leading-relaxed text-[color:var(--muted)] md:text-2xl">${story.dek}</p>
               <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[color:var(--line)] pt-5 text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">
