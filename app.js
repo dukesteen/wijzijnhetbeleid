@@ -12,6 +12,14 @@
   // Deep clone for editing, restore from localStorage if available
   const STORAGE_KEY = "wijzijnhetbeleid-draft";
   let editData = loadDraft() || JSON.parse(JSON.stringify(content));
+  // Sync non-editable fields from source content into draft so renamed labels propagate
+  if (editData) {
+    Object.keys(content.stories).forEach((key) => {
+      if (editData.stories && editData.stories[key]) {
+        editData.stories[key].label = content.stories[key].label;
+      }
+    });
+  }
   let editMode = false;
   let pendingScrollTarget = null;
 
@@ -221,7 +229,7 @@
               <img src="${mainStory.heroImage.src}" alt="${mainStory.heroImage.alt}" class="w-full object-cover aspect-[16/7]" />
             </div>` : ""}
             <div class="mt-auto flex items-center justify-between gap-5 border-t border-[color:var(--line)] pt-5">
-              <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">${mainStory.label}</span>
+              <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">Achtergrond</span>
               <a href="${hrefForRoute(mainStory.slug)}" class="font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-opacity hover:opacity-75">Lees het verhaal</a>
             </div>
           </article>
@@ -244,7 +252,7 @@
                     <h3 ${e(`stories.${story.id}.title`)} class="mt-4 max-w-2xl font-display text-4xl uppercase leading-none tracking-[-0.04em] text-[color:var(--ink)]">${story.title}</h3>
                     <p ${e(`stories.${story.id}.summary`)} class="mt-5 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
                     <div class="mt-auto flex items-center justify-between gap-5 border-t border-[color:var(--line)] pt-5">
-                      <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">${story.label}</span>
+                      <span class="text-sm uppercase tracking-[0.24em] text-[color:var(--muted)]">In de praktijk</span>
                       <a href="${hrefForRoute(story.slug)}" class="font-display text-sm uppercase tracking-[0.24em] text-[color:var(--accent)] transition-opacity hover:opacity-75">Open verhaal</a>
                     </div>
                   </article>
@@ -357,6 +365,17 @@
           <article id="story-article" class="grid gap-8 lg:grid-cols-[0.24fr_1fr]">
             <aside class="hidden lg:block space-y-6 lg:sticky lg:top-28 lg:self-start">
               <div data-reveal class="paper-panel reveal-block rounded-[2rem] p-6">
+                <ul class="space-y-3 text-sm uppercase tracking-[0.22em] text-[color:var(--muted)]">
+                  <li><a href="#/" class="transition-colors hover:text-[color:var(--accent)]">Terug naar home</a></li>
+                  ${story.relatedStories
+                    .map((id) => {
+                      const related = content.stories[id];
+                      return `<li><a href="${hrefForRoute(related.slug)}" class="transition-colors hover:text-[color:var(--accent)]">${related.shortTitle}</a></li>`;
+                    })
+                    .join("")}
+                </ul>
+              </div>
+              <div data-reveal class="paper-panel reveal-block rounded-[2rem] p-6">
                 <p class="font-display text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Samengevat</p>
                 <p ${e(`stories.${sid}.summary`)} class="mt-4 text-lg leading-relaxed text-[color:var(--ink)]">${story.summary}</p>
               </div>
@@ -391,7 +410,7 @@
                 .map(
                   (section, index) => `
                     <section data-reveal class="reveal-block paper-panel relative overflow-hidden rounded-[2.4rem] p-6 md:p-9 lg:p-10">
-                      <h2 ${e(`stories.${sid}.sections.${index}.heading`)} class="font-display text-2xl leading-none tracking-[-0.04em] text-[color:var(--ink)] sm:text-3xl md:text-5xl">${section.heading}</h2>
+                      <h2 ${e(`stories.${sid}.sections.${index}.heading`)} class="font-display text-xl leading-tight tracking-[-0.02em] text-[color:var(--ink)] sm:text-2xl md:text-3xl">${section.heading}</h2>
                       <div class="mt-8 space-y-6">
                       ${
                         section.sectionImage
