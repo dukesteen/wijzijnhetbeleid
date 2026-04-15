@@ -227,7 +227,7 @@
           </article>
         </section>
 
-        <!-- 3. In de praktijk (deelverhalen) -->
+        <!-- 3. In de praktijk -->
         <section id="de-praktijk" class="mx-auto max-w-7xl px-5 md:px-8">
           <div class="mb-8 flex items-end justify-between gap-6">
             <div>

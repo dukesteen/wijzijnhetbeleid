@@ -39,7 +39,7 @@ const SITE_CONTENT = {
   },
   routes: [
     { id: "home", slug: "", label: "Home", theme: "home" },
-    { id: "main", slug: "verhaal", label: "De kern", theme: "main" },
+    { id: "main", slug: "verhaal", label: "Achtergrond", theme: "main" },
     { id: "lansco", slug: "lansco", label: "LaNSCO", theme: "lansco" },
     {
       id: "markemodel",
@@ -109,16 +109,16 @@ const SITE_CONTENT = {
     main: {
       id: "main",
       slug: "verhaal",
-      label: "De kern",
+      label: "Achtergrond",
       theme: "main",
       title:
         "Wij zijn het beleid: hoe lossen we ingewikkelde maatschappelijke vraagstukken op?",
       shortTitle: "Wicked problems",
-      dek: "Van Rotterdamse schuldhulp tot het Nationaal Burgerberaad Klimaat: Wij zijn het beleid in de kern volgt de vraag hoe beleid anders kan ontstaan wanneer overheden burgers, experts en initiatiefnemers hun krachten bundelen.",
+      dek: "Van Rotterdamse schuldhulp tot het Nationaal Burgerberaad Klimaat: Wij zijn het beleid als achtergrond volgt de vraag hoe beleid anders kan ontstaan wanneer overheden burgers, experts en initiatiefnemers hun krachten bundelen.",
       byline: "Door Job Koskamp",
-      kicker: "Wij zijn het beleid in de kern",
+      kicker: "Wij zijn het beleid als achtergrond",
       summary:
-        "Wij zijn het beleid in de kern volgt de vraag hoe beleid anders kan ontstaan wanneer overheden burgers, experts en initiatiefnemers hun krachten bundelen.",
+        "Wij zijn het beleid als achtergrond volgt de vraag hoe beleid anders kan ontstaan wanneer overheden burgers, experts en initiatiefnemers hun krachten bundelen.",
       heroImage: {
         src: "./images/hero-main.jpg",
         alt: "Wij zijn het beleid",
@@ -208,7 +208,7 @@ const SITE_CONTENT = {
     lansco: {
       id: "lansco",
       slug: "lansco",
-      label: "Deelverhaal",
+      label: "In de praktijk",
       theme: "lansco",
       title: "Meer dan een uitkering: hoe mensen weer waardevol worden",
       shortTitle: "LaNSCO",
@@ -299,7 +299,7 @@ const SITE_CONTENT = {
     markemodel: {
       id: "markemodel",
       slug: "markemodel",
-      label: "Deelverhaal",
+      label: "In de praktijk",
       theme: "markemodel",
       title: "Landbouw in balans: het experiment dat wel werkt?",
       shortTitle: "Markemodel",
